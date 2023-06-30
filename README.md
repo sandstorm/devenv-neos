@@ -83,12 +83,17 @@ You can use [**every** devenv.sh configuration](https://devenv.sh/reference/opti
 
 ## Neos Configuration Options
 
+### Mysql (default: true)
 
-### Mysql
+`neos.mysql = false` to not configure mysql.
 
-### VIPS
+### VIPS (default: true)
 
-### IDE configuration
+`neos.vips = false` to not configure mysql.
+
+### IDE configuration (default: true)
+
+`neos.jetbrainsIdeConfig = false` to not configure mysql.
 
 ## common Devenv configuration options
 
@@ -100,4 +105,4 @@ You can use [**every** devenv.sh configuration](https://devenv.sh/reference/opti
 
 ### add Redis support
 
-### 
+

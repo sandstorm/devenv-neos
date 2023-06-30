@@ -82,6 +82,9 @@ let
     buildInputs = [ pkgs.vips pkgs.pkg-config ];
   };
 
+  # not sure why we need to read and write it again; but we had problems with stale contents of this script otherwise
+  ideConfigOptions = pkgs.writeTextFile { name = "ideConfigUpdates.php"; text = (builtins.readFile ./ide-config-updates.php); };
+
   ######################
   # Installing PHP-SPX (profiler)
   ######################
@@ -158,21 +161,15 @@ in
       settings.mysqld.port = mkDefault 4406;
     };
 
-    packages = []
-      # needed for the manipulation scripts
-      ++ optionals cfg.addJetbrainsIdeConfig [pkgs.yq-go];
-
     # Setup and Documentation
     enterShell = ''
       ${shellColors}
 
       cp ${ConfigurationSettingsYaml} Configuration/Settings.yaml
-      ${if cfg.addJetbrainsIdeConfig then ''
+      ${if cfg.jetbrainsIdeConfig then ''
         mkdir -p .idea
 
-        which php
-        echo ${./ide-config-updates.php}
-        php ${./ide-config-updates.php}
+        DB_USER=${(head config.services.mysql.ensureUsers).name} DB_PORT=${toString config.services.mysql.settings.mysqld.port} php ${ideConfigOptions}
       '' else ""}
 
       ${if cfg.vips then ''
@@ -192,7 +189,7 @@ in
         echo " - ''${green}SPX''${normal} profiler activated. URL: ''${green}http://127.0.0.1:<port>/?SPX_UI_URI=/&SPX_KEY=dev''${normal}"
         echo "   For further help, see ''${bold}help-spx''${normal}"
       '' else ""}
-      ${if cfg.addJetbrainsIdeConfig then ''
+      ${if cfg.jetbrainsIdeConfig then ''
         echo " - ''${green}IntelliJ/PHPStorm''${normal} configured:"
         echo "   - ''${green}Data Source''${normal} (Password: empty)"
         echo "   - ''${green}PHP Interpreter''${normal} set up"
@@ -256,7 +253,7 @@ in
       default = true;
     };
 
-    addJetbrainsIdeConfig = mkOption {
+    jetbrainsIdeConfig = mkOption {
       type = types.bool;
       description = "Should generate .idea/datasources.xml and .idea/php.xml ? (for use in PHPStorm or IntelliJ)";
       default = true;

@@ -33,7 +33,7 @@ replace_child_xml(
     <driver-ref>mysql</driver-ref>
     <synchronize>true</synchronize>
     <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-    <jdbc-url>jdbc:mariadb://localhost:$DB_PORT</jdbc-url>
+    <jdbc-url>jdbc:mysql://127.0.0.1:$DB_PORT</jdbc-url>
     <working-dir>\$ProjectFileDir$</working-dir>
     <user-name>$DB_USER</user-name>
 "
