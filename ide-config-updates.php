@@ -6,6 +6,9 @@ $DB_PORT = getenv('DB_PORT');
 
 const DATASOURCES_XML = '.idea/dataSources.xml';
 const PHP_XML = '.idea/php.xml';
+const WORKSPACE_XML = '.idea/workspace.xml';
+const MISC_XML = '.idea/misc.xml';
+
 $defaultXml = <<<END
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
@@ -25,8 +28,6 @@ $component = getElement($datasourcesXml->documentElement, 'component', 'DataSour
 });
 
 $dataSource = getElement($component, 'data-source', 'neos-local');
-
-
 replace_child_xml(
     $dataSource, "
     <driver-ref>mysql</driver-ref>
@@ -53,6 +54,25 @@ $interpreter->setAttribute('debugger_id', 'php.debugger.XDebug');
 $phpXml->save(PHP_XML);
 
 /*******************
+ * WORKSPACE XML
+ */
+$workspaceXml = loadXml(WORKSPACE_XML, $defaultXml);
+$component = getElement($workspaceXml->documentElement, 'component', 'PhpWorkspaceProjectConfiguration');
+$component->setAttribute('interpreter_name', 'PHP devenv.sh');
+$workspaceXml->save(WORKSPACE_XML);
+
+/*******************
+ * MISC XML
+ */
+$miscXml = loadXml(MISC_XML, $defaultXml);
+$component = getElement($miscXml->documentElement, 'component', 'NeosPluginSettings');
+replace_child_xml($component, '
+    <option name="pluginEnabled" value="true" />
+');
+$miscXml->save(MISC_XML);
+
+
+/*******************
  * HELPERS
  */
 
@@ -73,15 +93,18 @@ function getElement(DOMElement $context, string $tagName, ?string $nameAttribute
     if ($nameAttributeValue) {
         $xpathExpression .= '[@name="' . $nameAttributeValue . '"]';
     }
-    $xpathResult = $xpath->query($xpathExpression);
+    $xpathResult = $xpath->query($xpathExpression, $context);
     if ($xpathResult->count() === 0) {
-        $newElement = new DOMElement($tagName);
+        $newElement = $context->ownerDocument->createElement($tagName);
 
-        $newElement->setAttribute('name', $nameAttributeValue);
+        if ($nameAttributeValue) {
+            $newElement->setAttribute('name', $nameAttributeValue);
+        }
         if ($newElCreator) {
             $newElCreator($newElement);
         }
         $context->appendChild($newElement);
+        return $newElement;
     } else {
         $el = $xpathResult->item(0);
         assert($el instanceof DOMElement);
@@ -94,10 +117,9 @@ function replace_child_xml(DOMElement $parent, string $childXml): void
     $childXml = (string)$childXml;
 
     // empty all children
-    foreach (iterator_to_array($parent->childNodes->getIterator()) as $child) {
-        $child->remove();
+    while ($parent->hasChildNodes()){
+        $parent->removeChild($parent->childNodes->item(0));
     }
-
     $fragment = $parent->ownerDocument->createDocumentFragment();
     $fragment->appendXML($childXml);
 

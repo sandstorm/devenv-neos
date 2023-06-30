@@ -73,29 +73,6 @@ let
   ConfigurationSettingsYaml = yamlFormatter.generate "Settings.yaml" ConfigurationSettings;
 
   ######################
-  # IntelliJ / PHPStorm Data Source generation for easy connecting to the DB
-  ######################
-  # <jdbc-url>jdbc:mariadb://localhost:${toString config.services.mysql.settings.mysqld.port}</jdbc-url>
-      #            <working-dir>$ProjectFileDir$</working-dir>
-      #            <user-name>${(head config.services.mysql.ensureUsers).name}</user-name>
-  DataSourcesXml = pkgs.writeTextFile {
-    name = "datasources.xml";
-    text = ''
-      <?xml version="1.0" encoding="UTF-8"?>
-      <project version="4">
-        <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-          <data-source source="LOCAL" name="neos">
-            <driver-ref>mariadb</driver-ref>
-            <synchronize>true</synchronize>
-            <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-
-          </data-source>
-        </component>
-      </project>
-    '';
-  };
-
-  ######################
   # Installing VIPS (image handling)
   ######################
   phpVipsExt = cfg.phpPackage.buildPecl {
@@ -192,33 +169,10 @@ in
       cp ${ConfigurationSettingsYaml} Configuration/Settings.yaml
       ${if cfg.addJetbrainsIdeConfig then ''
         mkdir -p .idea
-        chmod 0644 .idea/dataSources.xml || true
-        cp ${DataSourcesXml} .idea/dataSources.xml
 
-        cat .idea/php.xml | yq -e -p xml '.project.[].[] | select(.interpreters)'
-        interpretersFound=$?
-
-        yq  -e -p xml '.project.component.[] | select(.["+@name"] == "NeosPluginSettings")' .idea/misc.xml
-        neosPluginActive=$?
-
-        if [[ "$interpretersFound" == "1" ]]; then
-          echo "InterpretersEmpty"
-          export NEW_UUID=$(uuidgen)
-          yq  -i -p xml -o xml '.project.component += {"+@name": "PhpInterpreters", "interpreters": {"interpreter": {"+@id": env(NEW_UUID), "+@name": "PHP devenv.sh", "+@home": "$PROJECT_DIR$/.devenv/profile/bin/php"}} }' .idea/php.xml
-          yq  -i -p xml -o xml '(.project.component.[] | select(.["+@name"] == "PhpWorkspaceProjectConfiguration"))["+@interpreter_name"] = "PHP devenv.sh"' .idea/workspace.xml
-        else
-          echo "Interpreters found"
-        fi
-
-        if [[ "$neosPluginActive" == "1" ]]; then
-          echo "Noes plugin not active, activating"
-          export NEW_UUID=$(uuidgen)
-          yq  -i -p xml -o xml '.project.component += {"+@name": "NeosPluginSettings", "option": {"+@name": "pluginEnabled", "+@value": "true"} }' .idea/misc.xml
-        else
-          echo "Neos Plugin active"
-        fi
-
-
+        which php
+        echo ${./ide-config-updates.php}
+        php ${./ide-config-updates.php}
       '' else ""}
 
       ${if cfg.vips then ''
