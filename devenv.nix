@@ -130,8 +130,13 @@ in
         ++ attrValues (getAttrs config.languages.php.extensions cfg.phpPackage.extensions);
 
       extraConfig =
+        ''
+          memory_limit = 1024M
+          ; Neos still has minor errors with PHP 8.2
+          error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+        ''
         # if SPX is enabled, we add the corresponding config to php.ini
-        optionalString cfg.spx ''
+        + optionalString cfg.spx ''
           spx.http_enabled=1
           spx.http_key="dev"
           spx.http_ip_whitelist="127.0.0.1"
