@@ -2,6 +2,7 @@
 
 $DB_USER = getenv('DB_USER');
 $DB_PORT = getenv('DB_PORT');
+$DB_NAME = getenv('DB_NAME');
 
 
 const DATASOURCES_XML = '.idea/dataSources.xml';
@@ -28,15 +29,23 @@ $component = getElement($datasourcesXml->documentElement, 'component', 'DataSour
 });
 
 $dataSource = getElement($component, 'data-source', 'neos-local');
+
+// Build fake UUID deterministically
+$dataSource->setAttribute('uuid', '01234567-890a-bcde-0123-' . substr(md5(getcwd()), 0, 12));
 replace_child_xml(
-    $dataSource, "
+    $dataSource, <<<EOF
     <driver-ref>mysql</driver-ref>
     <synchronize>true</synchronize>
     <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
     <jdbc-url>jdbc:mysql://127.0.0.1:$DB_PORT</jdbc-url>
     <working-dir>\$ProjectFileDir$</working-dir>
     <user-name>$DB_USER</user-name>
-"
+    <schema-mapping>
+      <introspection-scope>
+        <node kind="schema" qname="neos" />
+      </introspection-scope>
+    </schema-mapping>
+    EOF
 );
 $datasourcesXml->save(DATASOURCES_XML);
 

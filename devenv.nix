@@ -174,7 +174,7 @@ in
       ${if cfg.jetbrainsIdeConfig then ''
         mkdir -p .idea
 
-        DB_USER=${(head config.services.mysql.ensureUsers).name} DB_PORT=${toString config.services.mysql.settings.mysqld.port} php ${ideConfigOptions}
+        DB_USER=${(head config.services.mysql.ensureUsers).name} DB_PORT=${toString config.services.mysql.settings.mysqld.port} DB_NAME=${(head config.services.mysql.initialDatabases).name} php ${ideConfigOptions}
       '' else ""}
 
       ${if cfg.vips then ''
