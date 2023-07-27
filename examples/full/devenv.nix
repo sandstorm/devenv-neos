@@ -7,9 +7,12 @@
   # USAGE
   #
   # - devenv shell: creates a shell environment for development.
-  #     use ./flow server:run for running the Neos server then.
+  #     - flow [flow-command]: run any ./flow command - no matter which directory you are in.
+  #     - flow server:run: run the Neos server
+  #     - help-spx: show help how to debug with SPX
+  #     -
   # - devenv up: start all surrounding services (e.g. mysql)
-  #
+  # - rm -Rf .devenv/: remove the database and all other files
   #
   # REFERENCE
   #
@@ -20,6 +23,10 @@
   ########################################
   neos = {
     enable = true;
+
+    # if Neos is installed in a subdirectory of the project root, specify the distributionDir accordingly
+    # (pointing to composer.json and ./flow)
+    #distributionDir = "app";
 
     # PHP Package version to use (default: pkgs.php81)
     #phpPackage = pkgs.php82;
@@ -38,7 +45,7 @@
     # to open the profiler, append: ?SPX_UI_URI=/&SPX_KEY=dev
     #spx = false;
 
-    # Configure PHPStorm / IntelliJ correctly (default: enabled)
+    # Configure PHPStorm / I  ntelliJ correctly (default: enabled)
     # enables the Neos plugin, sets the correct PHP interpreter, adds a database connection
     #jetbrainsIdeConfig = false;
   };
@@ -51,6 +58,10 @@
   # use the following line to enable xdebug; and you can also add additional extensions.
   #languages.php.extensions = [ "xdebug" ];
 
+  # add custom PHP.ini directives
+  #languages.php.ini = ''
+  #  xdebug.mode = debug;
+  #'';
 
   ########################################
   # additional MySQL configuration

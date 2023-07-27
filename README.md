@@ -86,6 +86,7 @@ See [examples/full/devenv.nix](./examples/full/devenv.nix) for a heavily comment
 
 ## planned features
 
+- tutorial for postgres
 - tutorial for adding Node.JS environment (for building assets)
 - tutorial for a custom file watcher, e.g. for assets
 - tutorial for elasticsearch

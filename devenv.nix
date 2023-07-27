@@ -170,7 +170,7 @@ in
     enterShell = ''
       ${shellColors}
 
-      cp ${ConfigurationSettingsYaml} Configuration/Settings.yaml
+      cp ${ConfigurationSettingsYaml} ./${config.neos.distributionDir}/Configuration/Settings.yaml
       ${if cfg.jetbrainsIdeConfig then ''
         mkdir -p .idea
 
@@ -178,7 +178,9 @@ in
       '' else ""}
 
       ${if cfg.vips then ''
+        pushd ./${cfg.distributionDir}
         composer require rokka/imagine-vips
+        popd
       '' else ""}
 
       echo ""
@@ -202,8 +204,14 @@ in
       echo "''${green}=============================================''${normal}"
   '';
 
+  scripts.flow.exec = ''
+    olddir=`pwd`
+    cd ${config.env.DEVENV_ROOT}/${cfg.distributionDir}
+    ./flow $@
+    cd "$olddir"
+  '';
+
   scripts.help-spx.exec = ''
-    ${shellColors}
 
     echo ""
     echo "''${bold}Profiling web requests:''${normal}"
@@ -228,6 +236,12 @@ in
   ########################################################################################
   options.neos = {
     enable = mkEnableOption "Neos Addon";
+
+    distributionDir = mkOption {
+      type = types.str;
+      default = ".";
+      description = "the Neos distribution directory (e.g. where composer.json and ./flow is located)";
+    };
 
     phpPackage = mkOption {
       type = types.package;
