@@ -1,0 +1,6 @@
+inputs:
+  nixpkgs:
+    url: github:NixOS/nixpkgs/nixpkgs-unstable
+# !! clone https://github.com/sandstorm/devenv-neos into the "devenv-neos" subfolder
+imports:
+  - ./devenv-neos

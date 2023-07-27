@@ -1,0 +1,7 @@
+{ pkgs, ... }:
+
+{
+  neos = {
+    enable = true;
+  };
+}
