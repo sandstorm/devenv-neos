@@ -170,7 +170,10 @@ in
     enterShell = ''
       ${shellColors}
 
-      cp ${ConfigurationSettingsYaml} ./${config.neos.distributionDir}/Configuration/Settings.yaml
+      mkdir -p ./${cfg.distributionDir}/Configuration
+      cp ${ConfigurationSettingsYaml} ./${cfg.distributionDir}/Configuration/Settings.yaml
+      chmod 644 ./${cfg.distributionDir}/Configuration/Settings.yaml
+
       ${if cfg.jetbrainsIdeConfig then ''
         mkdir -p .idea
 
@@ -179,7 +182,10 @@ in
 
       ${if cfg.vips then ''
         pushd ./${cfg.distributionDir}
-        composer require rokka/imagine-vips
+
+        if ! grep rokka/imagine-vips composer.json; then
+          composer require rokka/imagine-vips
+        fi
         popd
       '' else ""}
 
