@@ -148,7 +148,7 @@ in
     # configure mysql with DB "neos" and user "neos" (empty password)
     services.mysql = lib.mkIf cfg.mysql {
       # DB migrations on mariadb M1 Mac are painfully slow (40 secs), so we switch to Mysql.
-      package = pkgs.mysql80;
+      package = mkDefault pkgs.mysql80;
       enable = true;
       initialDatabases = [
         { name = "neos"; }
