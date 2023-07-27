@@ -81,28 +81,13 @@ You need the Nix package manager set up; alongside with devenv.sh.
 
 You can use [**every** devenv.sh configuration](https://devenv.sh/reference/options/) directly in the `devenv.nix` file above.
 
-## Neos Configuration Options
-
-### Mysql (default: true)
-
-`neos.mysql = false` to not configure mysql.
-
-### VIPS (default: true)
-
-`neos.vips = false` to not configure mysql.
-
-### IDE configuration (default: true)
-
-`neos.jetbrainsIdeConfig = false` to not configure mysql.
-
-## common Devenv configuration options
-
-### add Node.JS environment (for building assets)
-
-### custom file watcher (e.g. for asset compilation)
-
-### add Elasticsearch support
-
-### add Redis support
+See [examples/full/devenv.nix](./examples/full/devenv.nix) for a heavily commented copy/pastable example. 
 
 
+## planned features
+
+- tutorial for adding Node.JS environment (for building assets)
+- tutorial for a custom file watcher, e.g. for assets
+- tutorial for elasticsearch
+- tutorial for Redis support
+- subdirectories for Neos
