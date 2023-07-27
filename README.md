@@ -91,4 +91,3 @@ See [examples/full/devenv.nix](./examples/full/devenv.nix) for a heavily comment
 - tutorial for a custom file watcher, e.g. for assets
 - tutorial for elasticsearch
 - tutorial for Redis support
-- subdirectories for Neos
