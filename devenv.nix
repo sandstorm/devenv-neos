@@ -170,9 +170,11 @@ in
     enterShell = ''
       ${shellColors}
 
-      mkdir -p ./${cfg.distributionDir}/Configuration
-      cp ${ConfigurationSettingsYaml} ./${cfg.distributionDir}/Configuration/Settings.yaml
-      chmod 644 ./${cfg.distributionDir}/Configuration/Settings.yaml
+      ${if cfg.flowConfig then ''
+          mkdir -p ./${cfg.distributionDir}/Configuration
+          cp ${ConfigurationSettingsYaml} ./${cfg.distributionDir}/Configuration/Settings.yaml
+          chmod 644 ./${cfg.distributionDir}/Configuration/Settings.yaml
+      '' else ""}
 
       ${if cfg.jetbrainsIdeConfig then ''
         mkdir -p .idea
@@ -191,10 +193,13 @@ in
 
       echo ""
       echo "''${green}=============================================''${normal}"
-      echo "''${bold}FINISHED: ''${green}Your Neos environment is ready!''${normal}"
+      echo "''${bold}FINISHED: ''${green}Your PHP environment is ready!''${normal}"
       echo ""
       echo " - ''${green}PHP ${cfg.phpPackage.version}''${normal} installed"
-      echo " - Neos ''${green}Configuration/Settings.yaml''${normal} written"
+      ${if cfg.flowConfig then ''
+        echo " - Neos ''${green}Configuration/Settings.yaml''${normal} written"
+      '' else ""}
+
       ${if cfg.vips then ''
         echo " - ''${green}VIPS''${normal} activated"
       '' else ""}
@@ -208,6 +213,8 @@ in
         echo "   - ''${green}PHP Interpreter''${normal} set up"
       '' else ""}
       echo "''${green}=============================================''${normal}"
+
+      cd ${cfg.distributionDir}
   '';
 
   scripts.flow.exec = ''
@@ -283,5 +290,11 @@ in
       description = "Should generate .idea/datasources.xml and .idea/php.xml ? (for use in PHPStorm or IntelliJ)";
       default = true;
     };
+
+    flowConfig = mkOption {
+       type = types.bool;
+       description = "Should generate Configuration/Settings.yaml";
+       default = true;
+     };
   };
 }

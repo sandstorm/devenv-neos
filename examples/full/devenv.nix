@@ -48,6 +48,9 @@
     # Configure PHPStorm / I  ntelliJ correctly (default: enabled)
     # enables the Neos plugin, sets the correct PHP interpreter, adds a database connection
     #jetbrainsIdeConfig = false;
+
+    # generate Configuration/Settings.yaml (default: enabled)
+    #flowConfig = false;
   };
 
 
