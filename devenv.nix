@@ -32,7 +32,9 @@ in
     ./_neosFlowConfig.nix
     ./_phpAndExtensions.nix
     ./_mysql.nix
+    ./_caddy.nix
     ./_ideConfig.nix
+    ./services/imagor.nix
   ];
   ########################################################################################
   ########################################################################################
@@ -124,9 +126,30 @@ in
     };
 
     flowConfig = mkOption {
-       type = types.bool;
-       description = "Should generate Configuration/Settings.yaml";
-       default = true;
-     };
+      type = types.bool;
+      description = "Should generate Configuration/Settings.yaml";
+      default = true;
+    };
+
+    caddyDefaultVhostConfig = mkOption {
+      type = types.lines;
+      default = "";
+      description = ''
+        These lines go into the default vhost verbatim.
+      '';
+    };
+
+    caddyDefaultVhostPort = lib.mkOption {
+      type = lib.types.int;
+      default = 8081;
+      description = ''
+        Caddy port
+      '';
+    };
+    caddyDefaultVhostRoot = lib.mkOption {
+      type = types.str;
+      default = config.devenv.root;
+      description = "The default vhost root";
+    };
   };
 }

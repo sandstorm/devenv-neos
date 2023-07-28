@@ -96,5 +96,25 @@ in
       echo " - ''${green}SPX_ENABLED=1 SPX_REPORT=full''${normal} php ..."
       echo "   for CLI profiling which can be analyzed in the web UI"
     '';
+
+    languages.php.fpm.pools = {
+      appPool = {
+        settings = {
+          "pm" = "dynamic";
+          "pm.max_children" = 75;
+          "pm.start_servers" = 10;
+          "pm.min_spare_servers" = 5;
+          "pm.max_spare_servers" = 20;
+          "pm.max_requests" = 500;
+        };
+      };
+    };
+
+    neos.caddyDefaultVhostConfig = lib.mkIf config.services.caddy.enable ''
+      php_fastcgi unix/${config.languages.php.fpm.pools.appPool.socket}
+      file_server
+      log
+    '';
+
   };
 }
