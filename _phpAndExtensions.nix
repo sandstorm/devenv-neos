@@ -59,6 +59,8 @@ in
           memory_limit = 1024M
           ; Neos still has minor errors with PHP 8.2
           error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+
+          xdebug.max_nesting_level = 1024
         ''
         # if SPX is enabled, we add the corresponding config to php.ini
         + optionalString cfg.spx ''
